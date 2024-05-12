@@ -35,12 +35,37 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/assignments/:id', async(req, res)=>{
+            const id =req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await assignCollection.findOne(query);
+            res.send(result)
+        })
+
         app.post('/assignments', async (req, res) => {
             const crteAssaign = req.body;
             console.log(crteAssaign)
             const result = await assignCollection.insertOne(crteAssaign)
             res.send(result)
         })
+        app.put('/assignments/:id', async(req,res)=>{
+            const id= req.params.id;
+            const filter ={_id:new ObjectId(id)}
+            const options = {upsert: true};
+            const updateAssaign = req.body;
+            const update={
+                $set: {
+                    assign: updateAssaign.assign,
+                    date: updateAssaign.date,
+                    description : updateAssaign.description,
+                    mark: updateAssaign.mark,
+                    photo: updateAssaign.photo,
+                    title: updateAssaign.title
+                }
+            }
+            const result = await assignCollection.updateOne(filter,update,options);
+            res.send(result)
+                })
 
         app.delete('/assignments/:id', async(req,res)=>{
             const id = req.params.id;
